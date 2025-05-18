@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.responses import RedirectResponse
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 
 import secrets
 
@@ -23,3 +24,17 @@ async def create_short_url(db: Annotated[AsyncSession, Depends(get_db)], url: Ur
     await db.commit()
 
     return {"short_url": HOME_PAGE + short_url}
+
+
+@app.get(
+    "/{short_url}",
+    response_class=RedirectResponse,
+    responses={301: {"description": "Redirect to original url"}},
+)
+async def redirect(db: Annotated[AsyncSession, Depends(get_db)], short_url: str):
+    record = await db.scalar(select(URL).where(URL.short_url == short_url))
+
+    if record is None:
+        raise HTTPException(status_code=404, detail="This url does not exist!")
+
+    return RedirectResponse(url=record.original_url)

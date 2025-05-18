@@ -12,7 +12,7 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     hashed_password = Column(String(100), nullable=False)
 
-    urls = relationship("URL", back_populates="urls", uselist=True)
+    urls = relationship("URL", back_populates="user", uselist=True)
 
 
 class URL(Base):
@@ -23,4 +23,4 @@ class URL(Base):
     original_url = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
 
-    user = relationship("User", back_populates="user", uselist=False)
+    user = relationship("User", back_populates="urls", uselist=False)

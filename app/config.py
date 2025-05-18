@@ -12,4 +12,4 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 BYTES_QUANTITY = 16
 
-HOME_PAGE = "http://127.0.0.1/"
+HOME_PAGE = "http://127.0.0.1:8000/"
